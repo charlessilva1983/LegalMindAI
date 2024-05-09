@@ -17,7 +17,7 @@ Para configurar o LegalMindAI em seu ambiente local, siga os passos abaixo:
 
 1. **Clone o Repositório**
    ```bash
-   git clone https://github.com/seu-usuario/LegalMindAI.git
+   git clone https://github.com/AdrianoJDXavier/LegalMindAI.git
    cd LegalMindAI
 
 2. **Instalação de Dependências**
