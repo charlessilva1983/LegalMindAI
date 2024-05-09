@@ -6,8 +6,6 @@ LegalMindAI é uma plataforma avançada que utiliza Inteligência Artificial par
 
 - **Consulta Automatizada de Processos**: Acesso automatizado a diversos tribunais e bases de dados judiciais.
 - **Análise Inteligente**: Utiliza modelos de IA para analisar os dados dos processos e oferecer insights.
-- **Interface Intuitiva**: Facilidade de uso com uma interface amigável e responsiva.
-- **Segurança de Dados**: Garante a proteção e a privacidade dos dados manipulados.
 
 ## Pré-requisitos
 
@@ -27,6 +25,7 @@ Para configurar o LegalMindAI em seu ambiente local, siga os passos abaixo:
    python -m venv venv
    source venv/bin/activate  
    # No Windows use `venv\Scripts\activate`
+   pip install google-generativeai
 
 3 . **Configuração das Variáveis de Ambiente**
 
@@ -34,7 +33,3 @@ Crie um arquivo .env na raiz do projeto e preencha-o com as credenciais necessá
 
 ```bash
   API_KEY=sua_api_key_aqui
-
-
-
-
