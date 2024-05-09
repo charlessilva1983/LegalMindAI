@@ -3,9 +3,9 @@ from pathlib import Path
 import hashlib
 import google.generativeai as genai
 
-genai.configure(api_key="")
+API_KEY = ''
+genai.configure(api_key=API_KEY)
 
-# Set up the model
 generation_config = {
   "temperature": 1,
   "top_p": 0.95,
