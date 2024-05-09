@@ -1,4 +1,40 @@
 import requests
+from pathlib import Path
+import hashlib
+import google.generativeai as genai
+
+genai.configure(api_key="AIzaSyAwEYuuhqOPJ-VuWwlymOoITTko_2_r8Sk")
+
+# Set up the model
+generation_config = {
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 0,
+  "max_output_tokens": 8192,
+}
+
+safety_settings = [
+  {
+    "category": "HARM_CATEGORY_HARASSMENT",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+  {
+    "category": "HARM_CATEGORY_HATE_SPEECH",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+  {
+    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+  {
+    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+    "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+  },
+]
+
+model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest",
+                              generation_config=generation_config,
+                              safety_settings=safety_settings)
 
 def remover_zero_esquerda(numero):
     # Remove o zero à esquerda apenas se estiver na faixa de 01 a 09
@@ -6,16 +42,6 @@ def remover_zero_esquerda(numero):
         return numero[1:]
     return numero
 
-# Simulando que 'process_number' vem de um POST request, aqui um valor de exemplo:
-process_number = "0001802-52.2015.8.26.0052"
-
-# Limpa o número do processo
-process_number = process_number.replace('.', '').replace('-', '')
-
-# Extrai o código do tipo de justiça e do tribunal
-j = process_number[13:14]
-tr = process_number[14:16]
-tr = remover_zero_esquerda(tr)
 
 # Aqui, tribunais é um dicionário que você precisa ter definido anteriormente
 # Por exemplo:
@@ -105,10 +131,6 @@ tribunais = {
     }
 }
 
-# Verifica se o tribunal tem API e está disponível
-print(j)
-print(tr)
-print(tribunais)
 def get_process_details(process_number):
     # Remove '.' e '-' do número do processo
     clean_process_number = process_number.replace('.', '').replace('-', '')
@@ -147,11 +169,33 @@ def get_process_details(process_number):
                 'processo': processo,
                 'tribunal': court_info['nome']
             }
-            print(result)
+            return result
         else:
-            print({"error": "Erro ao consultar o processo."})
+            return {"error": "Erro ao consultar o processo."}
     else:
-        print({"error": "Tribunal não encontrado ou link indisponível."})
+        return {"error": "Tribunal não encontrado ou link indisponível."}
 
+print('Digite o Número do processo:')
+
+process_number = input('Numero:')
 # Exemplo de uso da função
-get_process_details("0600001-02.2021.6.14.0098")
+result_process = get_process_details(process_number)
+
+convo = model.start_chat(history=[
+  {
+    "role": "user",
+    "parts": [f"Gere um relatorio a partir desses dados {result_process}"]
+  },
+])
+
+convo.send_message("gere")
+print(convo.last.text)
+print('Como posso ajudar com esses dados?')
+print('Caso não precise de mais nada só digitar ENCERRAR')
+
+new_input = input('')
+
+convo.send_message(new_input)
+print(convo.last.text)
+
+
