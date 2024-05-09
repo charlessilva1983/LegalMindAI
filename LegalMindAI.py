@@ -1,15 +1,9 @@
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-API_KEY = os.getenv('API_KEY')
-
 import requests
 from pathlib import Path
 import hashlib
 import google.generativeai as genai
 
+API_KEY = ''
 genai.configure(api_key=API_KEY)
 
 generation_config = {
@@ -141,6 +135,9 @@ def get_process_details(process_number):
 
     if court_info and court_info.get('link'):
         url = court_info['link']
+        print(f"Type of court code: {type_of_court_code}")
+        print(f"Court code: {court_code}")
+        print(f"API URL: {url}")
 
         # Configuração da requisição HTTP
         headers = {

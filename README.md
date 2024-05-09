@@ -29,7 +29,6 @@ Para configurar o LegalMindAI em seu ambiente local, siga os passos abaixo:
    source venv/bin/activate  
    # No Windows use `venv\Scripts\activate`
    pip install google-generativeai
-   pip install python-dotenv
 
 3 . **Configuração das Variáveis de Ambiente**
 
