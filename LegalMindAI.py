@@ -36,15 +36,7 @@ model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest",
                               generation_config=generation_config,
                               safety_settings=safety_settings)
 
-def remover_zero_esquerda(numero):
-    # Remove o zero à esquerda apenas se estiver na faixa de 01 a 09
-    if len(numero) > 1 and numero[0] == '0':
-        return numero[1:]
-    return numero
-
-
-# Aqui, tribunais é um dicionário que você precisa ter definido anteriormente
-# Por exemplo:
+# Aqui são definidos os tribunais e seus links do CNJ
 tribunais = {
     1: {'link': '', 'nome': 'Supremo Tribunal Federal'},
     2: {'link': '', 'nome': 'Conselho Nacional de Justiça'},
@@ -139,7 +131,6 @@ def get_process_details(process_number):
     type_of_court_code = int(clean_process_number[13:14])  # Convertendo para int
     court_code = int(clean_process_number[14:16])  # Convertendo para int e removendo zeros à esquerda automaticamente
 
-    # Acessando o dicionário de forma segura
     court_info = tribunais.get(type_of_court_code, {}).get(court_code, None)
 
     if court_info and court_info.get('link'):
@@ -178,7 +169,7 @@ def get_process_details(process_number):
 print('Digite o Número do processo:')
 
 process_number = input('Numero:')
-# Exemplo de uso da função
+
 result_process = get_process_details(process_number)
 
 convo = model.start_chat(history=[
