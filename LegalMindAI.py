@@ -37,9 +37,19 @@ safety_settings = [
   },
 ]
 
-model = genai.GenerativeModel(model_name="gemini-1.5-pro-latest",
+model = genai.GenerativeModel(model_name="gemini-1.0-pro",
                               generation_config=generation_config,
                               safety_settings=safety_settings)
+
+chat = model.start_chat(history=[])
+
+import textwrap
+from IPython.display import display
+from IPython.display import Markdown
+
+def to_markdown(text):
+  text = text.replace('•', '  *')
+  return Markdown(textwrap.indent(text, '> ', predicate=lambda _: True))
 
 # Aqui são definidos os tribunais e seus links do CNJ
 tribunais = {
@@ -140,11 +150,9 @@ def get_process_details(process_number):
 
     if court_info and court_info.get('link'):
         url = court_info['link']
-        print(f"Type of court code: {type_of_court_code}")
-        print(f"Court code: {court_code}")
-        print(f"API URL: {url}")
-
+        
         # Configuração da requisição HTTP
+        # Essa cha APIKey é uma chave de acesso publico
         headers = {
             'Authorization': 'APIKey cDZHYzlZa0JadVREZDJCendQbXY6SkJlTzNjLV9TRENyQk1RdnFKZGRQdw==',
             'Content-Type': 'application/json',
@@ -171,27 +179,20 @@ def get_process_details(process_number):
     else:
         return {"error": "Tribunal não encontrado ou link indisponível."}
 
-print('Digite o Número do processo:')
-
-process_number = input('Numero:')
-
-result_process = get_process_details(process_number)
-
-convo = model.start_chat(history=[
-  {
-    "role": "user",
-    "parts": [f"Gere um relatorio a partir desses dados {result_process}"]
-  },
-])
-
-convo.send_message("gere")
-print(convo.last.text)
-print('Como posso ajudar com esses dados?')
-print('Caso não precise de mais nada só digitar ENCERRAR')
-
-new_input = input('')
-
-convo.send_message(new_input)
-print(convo.last.text)
 
 
+#Imprimindo o histórico
+for message in chat.history:
+  chat.history.clear
+  display(to_markdown(f'**{message.role}**: {message.parts[0].text}'))
+  print('-------------------------------------------')
+num_processo = input("Digite o numero do processo: ")
+processo = get_process_details(num_processo)
+instrucao = "Vamos analisar um processo. Aja como um advogado com conhecimentos avançados, descreva o processo de forma detalhada, gere as informações como um relatório, e gere as informações conforme for recebendo o feedback do usuário, lembre de repassar as informações de maneira simples porem bem explicadas"
+response = chat.send_message(f"Processo: {processo}, Numero do processo: {num_processo}, Detalhes: {instrucao}")
+print("Resposta: ", response.text, "\n\n")
+acao = input("Em que posso ajudar? ")
+while acao != 'ENCERRAR':
+  response = chat.send_message(acao)
+  print("Resposta: ", response.text, "\n\n")
+  acao = input("Em que posso ajudar? ")
